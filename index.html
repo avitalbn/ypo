@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html manifest="ypo.appcache"> 
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="user-scalable=no, width=device-width, 
+    initial-scale=1, maximum-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href="apple-touch-icon-precomposed.png"/>
+
+  <title>Ember Safe YPO v0.35</title>
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <script type="text/x-handlebars" data-template-name="application">  
+    <div id="app">
+      {{render 'navBar'}}
+      {{render 'devBox'}}
+      {{#if Ypo.teamData.isGameStarted}}
+        <div id="teamBar"> 
+          <h2 id="teamName">{{Ypo.teamData.teamName}}</h2>
+          <div id="scoreBox">
+            <h2 id="scoreNum">{{Ypo.teamData.points}}</h2> 
+            <span id="points"> POINTS </span>
+          </div>
+        </div>
+      {{/if}}
+      <div id="page" class="container">
+        {{outlet}}
+      </div>
+      <div id="modal" class="modal hide" tabindex="-1" role="dialog" 
+        aria-labelledby="ariaLabel" aria-hidden="true">
+        {{render 'modal'}} 
+      </div>
+    </div>
+  </script>  
+
+  <script type="text/x-handlebars" data-template-name="navBar">  
+    {{#if Ypo.teamData.isGameStarted}}
+      <div id="navBar">
+        <ul class="nav nav-pills">
+          <li>
+            <img id="nav-brand" src="img/ggBrand-trans.png" height="65" width="111">
+          </li>
+          <li class="nav-pill"> 
+            <a id="nav-home" {{bindAttr class="isHomeActive:active"}}> HOME </a>
+          </li>
+          <li class="nav-pill">
+            <a id="nav-waypoints" {{bindAttr class="isWaypointsActive:active"}}> 
+              WAYPOINTS 
+            </a>
+          </li>
+          <li class="nav-pill"> 
+            <a id="nav-anytimes" {{bindAttr class="isAnytimesActive:active"}}> ANYTIMES </a>
+          </li>
+        </ul>
+      </div>
+    {{/if}}
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="devBox">  
+    <div id="showDevBox" {{action 'showDevBox'}}></div>
+    <div id="devBox" class=""> 
+        <h4> devBox </h4>
+        <button class="btn pull-left" id="hideDevBox" {{action 'hideDevBox'}}>Hide</button>
+        <button class="btn btn-danger btn-block" id="clearls" 
+          {{action 'clearLocalStorage'}}>Clear local storage</button>
+        <button class="btn btn-info btn-block" id="showls" 
+          {{action 'showLocalStorage'}}>Show local storage</button>
+        <button class="btn btn-danger btn-block" id="updateCache" 
+          {{action 'updateCache'}}>Update app cache</button>
+        <button class="btn btn-info btn-block" id="refresh" 
+          {{action 'refresh'}}>Refresh page</button>
+        <button class="btn btn-danger btn-block" id="changeTeamNum" 
+          {{action 'changeTeamNum'}}> Change team number </button>
+    </div>
+  </script>  
+
+  <script type="text/x-handlebars" data-template-name="modal">  
+    <img class="modal-img" width="125px" height="125px" {{bindAttr src="imgUrl"}}> 
+    <div class="modal-header"> 
+      <h2 {{bindAttr class="isCorrect:green:red"}}> {{title}} </h2> 
+    </div>
+
+    <div class="modal-body"> 
+      <h4> {{{msg}}} </h4>
+    </div>
+
+    <div class="modal-footer">
+      <div class="span3 pull-right">
+        <button id="modalBtn" 
+          data-dismiss="modal" aria-hidden="true" style="vertical-align:bottom;"
+          {{bindAttr class=":btn :btn-large :btn-block isCorrect:btn-success:btn-danger"}}
+          {{action 'applyCallback' bubbles=false}}>
+          {{btn}}
+        </button>
+      </div>
+    </div>
+  </script>  
+
+  <script type="text/x-handlebars" data-template-name="home">  
+    <div class="content">
+
+      <div id="homeLogo">
+        <img class="center img-outline" id="ggLogoLarge" src="img/coastal.jpg">
+      </div>
+
+      <h1 class="text-center">Highway 1 Rally</h1>
+      <br>
+
+      <h3>Rules of The Game:</h3>
+      <p><i class="icon-play"></i> The goal is to amass the highest number of points. Points are
+      awarded for completing missions successfully, completing them
+      creatively, and arriving at the final destination on time. The
+      team that arrives at the end first is not guaranteed a victory.</p>
+
+      <h3>Timing:</h3>
+      <p><i class="icon-forward"></i> 
+        You’ve got a lot of ground to cover and a ton of stuff to do, so it’s really important that you stay on task, and not to exceed the time limits on each mission. If you’re stumped on a mission and can’t figure it out, can't find the actor, get lost, etc. just snap a photo or two and then am-scray. If the mission requires a password or code, just guess three times to expire the tries and progress to the next mission.
+      </p>
+
+      <h3>Mission Types:</h3>
+      <ul id="missionTypes">
+          <li>
+            <h4><i class="icon-flag"></i> Waypoint missions </h4>          
+            <p> 
+              These are the most important missions in the game and you cannot win without completing all of the waypoint challenges provided. Your GPS is pre-loaded with several Waypoints. The first one is located farthest south, and they are listed sequentially as you make your way up the coast (heading North). The final waypoint is the end stop. You can read the description of each Waypoint challenge in this document under the tab: WAYPOINTS <br>
+              Waypoint missions come in three flavors:
+              <br><br>
+
+              <i class="icon-picture"></i><b class="green"> Creative</b> missions will issue a photo or video prompt, and it’s your task to come up with the most inventive solution. Your photos and videos will be evaluated by our creative experts, and you will receive bonus points for humour, originality and creativity. <br>
+              <b>ONLY TAKE PHOTOS WITH DIGITAL CAMERA PROVIDED </b><br>
+              <b>DO NOT TAKE PHOTOS WITH IPAD OR PERSONAL PHONES </b>
+              <br><br>
+
+              <i class="icon-search"></i><b class="blue"> Password</b> and 
+              <i class="icon-barcode"></i><b class="red"> Code</b> 
+              missions may involve finding clues, solving riddles, physical tasks, or interacting with planted actors. Whatever is it, upon completion you will get a code or password to enter into this document, receive points, and progress to the next mission. 
+              <br><br>
+            </p>
+          </li>
+          <li>
+            <h4><i class="icon-time"></i> Anytime Missions </h4>
+              <p>Anytime missions can be completed at any time. 
+              They are optional but increase your score, so do as many as you have time for!
+              They can be accessed under the ANYTIME tab and come in three flavors: <br>
+              <i class="icon-camera"></i><b class="green"> Creative</b> 
+              <i class="icon-fire"></i><b class="blue"> Brain Burner</b> 
+              <i class="icon-question-sign"></i><b class="red"> Trivia</b> 
+              </p>
+              <br>
+          </li>
+      </ul>
+      <h3>Good luck and have fun!</h3>
+      <br>
+
+      {{#unless Ypo.teamData.isGameStarted}}
+        <p>To begin please enter your team name:</p>
+        <div class="row-fluid">
+          <form id="teamNameForm" {{action 'startNewGame' on='submit' bubbles=true}}>
+            <div class="span7">
+              <input id="teamNameInput" class="input-block-level" type="text" placeholder="Creative Witty Team Name">
+            </div>
+            <div class="span5">
+              <button id="teamNameButton" class="btn btn-block btn-large btn-warning" type="submit">Go!</button>
+            </div>
+          </form>
+        </div>
+        <br>
+      {{/unless}}
+
+      <hr>
+      <footer>
+        <p class="muted text-right">This app powered by:</p>
+        <img class="powerLogo" src="img/html5css3badges.png" width="84" height="50">
+        <img class="powerLogo" src="img/jqueryMobileLogoLarge.png" width="108" height="50">
+        <img class="powerLogo" src="img/twitter-bootstrap-logo.png" width="50" height="50">
+        <img class="powerLogo" src="img/ember-logo.png" width="77" height="30" id="emberLogo">
+      </footer>
+      <br><br><br>
+      <br><br>
+
+    </div>
+  </script>    
+
+  <script type="text/x-handlebars" data-template-name="waypoints">
+    {{outlet}}
+  </script>  
+
+  <script type="text/x-handlebars" data-template-name="waypoint">  
+    <div class='container'>
+
+      <nav class="missionNav">
+        <button {{bindAttr class=":btn :btn-large isPrevEnabled::disabled"}}{{action 'goPrev'}}>&lt</button>
+        <span id="missionNum"> {{id}} of 6 </span>
+        <button {{bindAttr class=":btn :btn-large isNextEnabled::disabled"}}{{action 'goNext'}}>&gt</button>
+      </nav>
+
+      <h1>{{title}}</h1>
+      <h4>Location:</h4>
+      <p>{{{location}}}</p>
+      <h4>Mission:</h4>
+      <p>{{{description}}}</p>
+      <br>
+
+      {{#if isCreative}}
+        {{#unless isCompleted}}
+          <button class="btn btn-large btn-info" id='wpCompleted' {{action 'markCompleted' pointValue bubbles=false}}>
+            MARK AS COMPLETED
+          </button>
+        {{/unless}}
+      {{/if}}
+
+      {{#unless isCreative}}
+        {{#unless isCompleted}}
+          <div class="row-fluid">
+            <form id="wpForm" {{action formSubmit on='submit' bubbles=false}} > 
+              <div class="span6">
+                {{view Ypo.Input id='wpInput' valueBinding=inputVal placeholderBinding=type}}
+              </div>
+              <div class="span3">
+                <button id="wpSubmitButton" class="btn btn-large btn-block btn-info" type="submit">SUBMIT</button>
+              </div>
+            </form>
+          </div>
+          <h4 id="tries">TRIES LEFT: {{Ypo.teamData.tries}} </h4>
+        {{/unless}}
+      {{/unless}}
+      <br>
+
+      {{#if isCompleted}}
+        <img width="125px" height="125px" src="img/green-sign.png"> 
+        <h4>Points awarded: {{pointsAwarded}}</h4>
+      {{/if}}
+
+    </div>
+  </script>   
+
+  <script type="text/x-handlebars" data-template-name="waypoints/end">  
+    <div class='container'>
+      <nav class="missionNav">
+        <button class="btn btn-large" {{action 'goPrev'}}> &lt </button>
+        <button class="btn btn-large disabled"> &gt </button>
+      </nav>
+       
+      <h1>Finished!</h1>
+      <img id="finishImg" src="img/finishLogo.png" height="160" width="160">
+      <h2 class="text-center">You have completed all waypoint missions.<br>
+       Good job!</h2><br>
+      <p class="text-center">Now head over to the shuttles (NOT your RV) that will take you to Sea Drift.</p>
+      <br><br><br>
+    </div>
+  </script>  
+
+  <script type="text/x-handlebars" data-template-name="anytimes">
+    {{outlet}}
+  </script>  
+
+  <script type="text/x-handlebars" data-template-name="anytimes/list">  
+    <div class="content" id="anytimeDiv">
+      <div>
+        <ol id="anytimeList">
+          {{#each controller}}
+            <li class="anytimeMission">
+              <div class="btn-group" {{action goAnytime id}}>
+                <button id="missionId" {{bindAttr class=":btn :btn-large isCompleted:btn-success:btn-info"}}> {{id}} </button>
+                <button class="btn btn-large"> {{title}} </button>
+                <button class="btn btn-large">
+                  {{#if isCreative}}<i class="icon-camera"></i>{{/if}}
+                  {{#if isBrain}}<i class="icon-fire"></i>{{/if}}
+                  {{#if isTrivia}}<i class="icon-question-sign"></i>{{/if}}
+                </button>
+                <button id="missionPointVal" {{bindAttr class=":btn :btn-large isCompleted:btn-success"}}> {{pointValue}} Points </button>
+              </div>
+            </li>
+          {{/each}}
+        </ol>
+      </div>
+      <br><br><br>
+    </div>
+  </script>  
+
+  <script type="text/x-handlebars" data-template-name="anytime">  
+    <div class="content" id="anytimeMissionDiv">
+
+      <nav class="missionNav">
+        <button class="btn btn-large" {{action 'goPrev'}}> &lt </button>
+        <span id="missionNum"> {{id}} </span>
+        <button class="btn btn-large " {{action 'goNext'}}> &gt </button>
+        <button class="btn btn-large backToList" {{action 'back'}}>BACK TO LIST</button>
+      </nav>
+
+      <h1>{{title}}</h1>
+      <br>
+      <h4 id="anytimeType"> 
+        {{#if isCreative}} Type: Creative <i class="icon-camera"></i>{{/if}}
+        {{#if isBrain}} Type: Brain Burner <i class="icon-fire"></i>{{/if}}
+        {{#if isTrivia}} Type: Trivia <i class="icon-question-sign"></i>{{/if}}
+      </h4>
+      <p>{{description}}</p>
+      <br>
+
+      {{#if hasImg}}
+        <img class="anytime-img" {{bindAttr src="imgUrl"}}> 
+      {{/if}}
+
+      {{#if isCreative}}
+        {{#unless isCompleted}}
+          <button class="btn btn-large btn-info" {{action 'markCompleted' pointValue bubbles=false}}>
+            MARK AS COMPLETED
+          </button>
+        {{/unless}}
+      {{/if}}
+
+      {{#unless isCreative}}
+        {{#unless isCompleted}}
+          <div class="row-fluid">
+            <form id="atForm" {{action formSubmit on='submit' bubbles=false}} > 
+              <div class="span6">
+                {{view Ypo.Input id='atInput' valueBinding=inputVal placeholder='Answer'}}
+              </div>
+              <div class="span3">
+                <button id="atSubmitButton" class="btn btn-large btn-block btn-info" type="submit">SUBMIT</button>
+              </div>
+            </form>
+          </div>
+        {{/unless}}
+      {{/unless}}
+      <br>
+
+      {{#if isCompleted}}
+        <img width="125px" height="125px" src="img/green-sign.png"> 
+        <h4>Points awarded: {{pointsAwarded}} </h4>
+      {{/if}}
+
+    </div>
+  </script>  
+
+
+  <script src="js/libs/jquery-1.9.1.js"></script>
+  <script src="js/libs/bootstrap.min.js"></script>
+  <script src="js/libs/handlebars-1.0.0-rc.4.js"></script>
+  <script src="js/libs/ember-latest.js"></script>
+
+  <script src="js/utils.js"></script>
+  <script src="js/missions.js"></script>
+  <script src="js/ypo.js"></script>
+  <script src="js/routes.js"></script>
+  <script src="js/controllers.js"></script>
+  <script src="js/views.js"></script>
+  <script src="js/models.js"></script>
+
+</body>
+</html>
